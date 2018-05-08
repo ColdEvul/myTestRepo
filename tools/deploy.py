@@ -72,7 +72,7 @@ def main():
     print('\n Found a total of {} directories and {} files.\n'.format(str(countDir),str(countFiles)))
 
     # Continue?
-    #input('Press enter to continue...')
+    input('Press enter to continue...')
 
     # Preping build
     # Creating release folder
@@ -112,10 +112,13 @@ def main():
     #             os.makedirs('{}\\'.format(MOD,subDir))
         #shutil.copy2(dirs, releaseFolder)
 
+    print('build is compleet...')
+
     if 'testbuild' in arguments:
+
+        input('Release will be deconstructed, press enter to continue...')
         os.chdir(root_path)
-        print(root_path)
-        shutil.rmtree('\\release', ignore_errors=True)
+        shutil.rmtree('release', ignore_errors=True)
 
 if __name__ == "__main__":
     sys.exit(main())
