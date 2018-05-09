@@ -40,13 +40,20 @@ def main():
     else:
         sys.exit("Could not find config file...")
 
+
+    # Print project path
+    print(' Project folder:      {}'.format(root_path))
+
+    # Get .git path
+    git_path = root_path + '\\.git'
+    repo = git.Repo(git_path)
+
     # Get reposetory link
-    HTTPS = config.get('GIT', 'HTTPS', fallback='')
+    HTTPS = repo.remotes.origin.url
     print(' Reposetory:          {}'.format(HTTPS))
 
     # get current branch
-    git_path = root_path + '\\.git'
-    repo = git.Repo(git_path)
+
     repo = repo.active_branch
     print(' Current branch:      {}'.format(repo))
 
@@ -67,12 +74,21 @@ def main():
         files[:] = [f for f in files if f not in blacklist_list]
         filter_list_dir.append(dirs)
         filter_list_files.append(files)
-    countDir = len(filter_list_dir)
-    countFiles = len(filter_list_files)
+
+    # Calculating files
+    countDir = 0
+    countFiles = 0
+    for dlist in filter_list_dir:
+        for d in dlist:
+            countDir += 1
+    for flist in filter_list_files:
+        for f in flist:
+            countFiles += 1
+
     print('\n Found a total of {} directories and {} files.\n'.format(str(countDir),str(countFiles)))
 
     # Continue?
-    input('Press enter to continue...')
+    input('Press enter to start build...')
 
     # Preping build
     # Creating release folder
@@ -90,15 +106,60 @@ def main():
     releaseFolder = '{}\\release\\{}'.format(root_path,MOD)
     os.chdir(releaseFolder)
 
-    for dirs in filter_list_dir:
-        dirList = []
-        for dir in dirs:
-            dirList.append(dir)
-            try:
-                os.makedirs('\\'.join(dirList))
-                print('Setting up folder: {}\\{}'.format(MOD,'\\'.join(dirList)))
-            except:
-                sys.exit('Release folder is not empty. Pleace clean and rerun...')
+
+    print('DEBUG :: {}'.format(filter_list_dir))
+    print('DEBUG :: {}'.format(filter_list_files))
+
+
+
+    for dirList in filter_list_dir:
+        for dir in dirList:
+            print(dir)
+
+
+    # currentFolderIndexNumber = -1
+    # currentCheckedSubFolderIndexNumber = 1
+    # for dirList in filter_list_dir:
+    #     currentFolderIndexNumber += 1
+    #     subFolderNumbers = len(dirList)
+    #     for dir in dirList:
+    #         print(dir)
+    #         try:
+    #             for subDir in range(0, subFolderNumbers):
+    #                 for subDir in filter_list_dir[currentFolderIndexNumber+currentCheckedSubFolderIndexNumber]:
+    #                     print('{}\\{}'.format(dir,subDir))
+    #                     currentCheckedSubFolderIndexNumber += 1
+    #                 currentCheckedSubFolderIndexNumber += 1
+    #         except:
+    #             pass
+    #     break
+
+
+    # pathDir = 0
+    # for dirList in filter_list_dir:
+    #     print(dirList)
+    #     pathDir += 1
+    #     for dir in dirList:
+    #         print(dir)
+    #         try:
+    #             if filter_list_dir[pathDir] != "":
+    #                 for subDir in filter_list_dir[pathDir]:
+    #                     print('{}\\{}'.format(dir,subDir))
+    #                     pathDir += 1
+    #         except IndexError:
+    #             pass
+
+    #shutil.copyfile(src, dst, *, follow_symlinks=True)
+
+    # for dirs in filter_list_dir:
+    #     dirList = []
+    #     for dir in dirs:
+    #         dirList.append(dir)
+    #         try:
+    #             os.makedirs('\\'.join(dirList))
+    #             print('Setting up folder: {}\\{}'.format(MOD,'\\'.join(dirList)))
+    #         except:
+    #             sys.exit('Release folder is not empty. Pleace clean and rerun...')
 
 
     # subDir = []
@@ -110,15 +171,17 @@ def main():
     #             subDir.append('\\{}'.format(dir))
     #             subDir = ''.join(subDir)
     #             os.makedirs('{}\\'.format(MOD,subDir))
-        #shutil.copy2(dirs, releaseFolder)
+    #shutil.copy2(dirs, releaseFolder)
 
-    print('build is compleet...')
+    print('Build is compleet...')
 
     if 'testbuild' in arguments:
-
-        input('Release will be deconstructed, press enter to continue...')
+        input('\nRelease will be deconstructed, press enter to continue...')
         os.chdir(root_path)
         shutil.rmtree('release', ignore_errors=True)
+        print('Release folder is deconstructed...')
+
+    print('Done')
 
 if __name__ == "__main__":
     sys.exit(main())
